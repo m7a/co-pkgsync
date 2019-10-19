@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="sync_new_packages">
+
+	<target name="sync_new_packages">
+		<property name="masysma.ci.trigger" value="newtopleveladded"/>
+	</target>
+
+</project>
