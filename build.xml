@@ -2,7 +2,8 @@
 <project default="sync_new_packages">
 
 	<target name="sync_new_packages">
-		<property name="masysma.ci.trigger" value="newtopleveladded"/>
+		<property name="masysma.ci.trigger" value="topleveladded"/>
+		<property name="masysma.ci.trigger.param" value=".deb"/>
 	</target>
 
 </project>
