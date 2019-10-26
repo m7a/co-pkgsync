@@ -43,12 +43,9 @@ Description: Contains all MDVL-specific packages including configuration files.
 </echo>
 	</target>
 
-	<target name="sync_new_packages">
+	<target name="sync_all">
 		<property name="masysma.ci.trigger" value="topleveladded"/>
 		<property name="masysma.ci.trigger.param" value=".deb"/>
-	</target>
-
-	<target name="sync_all">
 		<apply executable="ant" failonerror="true" verbose="true">
 			<fileset dir=".." includes="*.deb"/>
 			<srcfile prefix="-Dmdpc.internal.pkgfile="/>
