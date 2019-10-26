@@ -1,9 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="sync_new_packages">
+<project default="sync_new_packages" xmlns:if="ant:if"
+						xmlns:unless="ant:unless">
+	<property name="mdpc.documentation">
+		Repository Configuration.
+
+		To use this build.xml you need to change this to
+		suit your local system.
+
+		Additionally, the private key needs to be imported:
+		gpg --import gpgkey_private.dat
+	</property>
+
+	<property name="mdpc.repo" value="/tmp/testrepo"/>
+	<property name="mdpc.dist" value="squeeze"/>
+	<!-- properties only needed for repository creation -->
+	<property name="mdpc.version" value="6.0.6"/>
+	<property name="mdpc.script.dir" value="/data/main/mdvl/scripts"/>
+	<property name="mdpc.pubkey"
+				value="${mdpc.script.dir}/res/gpgkey_exa.dat"/>
+	<property name="mdpc.architectures" value="i386 amd64"/>
+
+	<target name="repository_check">
+		<available file="${mdpc.repo}" type="dir"
+						property="repository.present"/>
+	</target>
+	<target name="repository_present" depends="repository_check"
+						unless="repository.present">
+		<mkdir dir="${mdpc.repo}"/>
+		<mkdir dir="${mdpc.repo}/conf"/>
+		<mkdir dir="${mdpc.repo}/incoming"/>
+		<copy file="${mdpc.pubkey}" tofile="${mdpc.repo}/pubkey"/>
+		<echo file="${mdpc.repo}/conf/distributions"
+>Origin: Linux-Fan, Ma_Sys.ma
+Label: Ma_Sys.ma MDVL Repository
+Suite: stable
+Codename: ${mdpc.dist}
+Version: 6.0.6
+Architectures: ${mdpc.architectures} source
+SignWith: yes
+Components: main non-free contrib
+Description: Contains all MDVL-specific packages including configuration files.
+</echo>
+	</target>
 
 	<target name="sync_new_packages">
 		<property name="masysma.ci.trigger" value="topleveladded"/>
 		<property name="masysma.ci.trigger.param" value=".deb"/>
+	</target>
+
+	<target name="sync_all">
+		<apply executable="ant" failonerror="true" verbose="true">
+			<fileset dir=".." includes="*.deb"/>
+			<srcfile prefix="-Dmdpc.internal.pkgfile="/>
+			<arg value="sync_single"/>
+		</apply>
+	</target>
+
+	<target name="sync_single" depends="repository_present">
+		<!-- requires property mdpc.internal.pkgfile -->
+
+		<!-- extract package names -->
+		<basename property="mdpc.internal.pkgbasename"
+					file="${mdpc.internal.pkgfile}"/>
+		<loadresource property="mdpc.internal.pkgname">
+			<propertyresource name="mdpc.internal.pkgbasename"/>
+			<filterchain>
+				<tokenfilter>
+					<replaceregex
+						pattern="_[^_]+_[^_]+\.deb$$"
+						replace="" flags="g"/>
+				</tokenfilter>
+			</filterchain>
+		</loadresource>
+		<loadresource property="mdpc.internal.pkgarch">
+			<propertyresource name="mdpc.internal.pkgbasename"/>
+			<filterchain>
+				<tokenfilter>
+					<replaceregex pattern="^[^_]+_[^_]+_"
+							replace="" flags="g"/>
+					<replaceregex pattern="\.deb$$"
+							replace="" flags="g"/>
+				</tokenfilter>
+			</filterchain>
+		</loadresource>
+
+		<!-- check existence of such package in repository -->
+		<condition property="mdpc.internal.isall">
+			<equals arg1="${mdpc.internal.pkgarch}" arg2="all"/>
+		</condition>
+		<property name="mdpc.internal.archflag" value=""
+					if:set="mdpc.internal.isall"/>
+		<property name="mdpc.internal.archflag"
+					value="-A ${mdpc.internal.pkgarch}"
+					unless:set="mdpc.internal.isall"/>
+		<exec executable="reprepro"  failonerror="true"
+				outputproperty="mdpc.internal.repreprolines">
+			<arg line="${mdpc.internal.archflag}"/>
+			<arg value="-b"/>
+			<arg value="${mdpc.repo}"/>
+			<arg value="list"/>
+			<arg value="${mdpc.dist}"/>
+			<arg value="${mdpc.internal.pkgname}"/>
+		</exec>
+		<condition property="mdpc.internal.haspkg">
+			<not><equals arg1="${mdpc.internal.repreprolines}"
+								arg2=""/></not>
+		</condition>
+
+		<!-- delete existing package from repository -->
+		<exec executable="reprepro" failonerror="true"
+						if:set="mdpc.internal.haspkg">
+			<arg line="${mdpc.internal.archflag}"/>
+			<arg value="-b"/>
+			<arg value="${mdpc.repo}"/>
+			<arg value="remove"/>
+			<arg value="${mdpc.dist}"/>
+			<arg value="${mdpc.internal.pkgname}"/>
+		</exec>
+
+		<!-- add new package to repository -->
+		<exec executable="reprepro" failonerror="true">
+			<arg value="-b"/>
+			<arg value="${mdpc.repo}"/>
+			<arg value="includedeb"/>
+			<arg value="${mdpc.dist}"/>
+			<arg value="${mdpc.internal.pkgfile}"/>
+		</exec>
+
+		<!-- delete new package file -->
+		<delete file="${mdpc.internal.pkgfile}"/>
 	</target>
 
 </project>
