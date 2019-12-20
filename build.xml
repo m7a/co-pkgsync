@@ -11,7 +11,7 @@
 		gpg --import gpgkey_private.dat
 	</property>
 
-	<property name="mdpc.repo" value="/tmp/testrepo"/>
+	<property name="mdpc.repo" value="/data/programs/repo"/>
 	<property name="mdpc.dist" value="squeeze"/>
 	<!-- properties only needed for repository creation -->
 	<property name="mdpc.version" value="6.0.6"/>
