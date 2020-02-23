@@ -18,7 +18,7 @@
 	<property name="mdpc.script.dir" value="/data/main/mdvl/scripts"/>
 	<property name="mdpc.pubkey"
 				value="${mdpc.script.dir}/res/gpgkey_exa.dat"/>
-	<property name="mdpc.architectures" value="i386 amd64"/>
+	<property name="mdpc.architectures" value="i386 amd64 armhf"/>
 
 	<target name="repository_check">
 		<available file="${mdpc.repo}" type="dir"
@@ -90,7 +90,7 @@ Description: Contains all MDVL-specific packages including configuration files.
 		<property name="mdpc.internal.archflag"
 					value="-A ${mdpc.internal.pkgarch}"
 					unless:set="mdpc.internal.isall"/>
-		<exec executable="reprepro"  failonerror="true"
+		<exec executable="reprepro" failonerror="true"
 				outputproperty="mdpc.internal.repreprolines">
 			<arg line="${mdpc.internal.archflag}"/>
 			<arg value="-b"/>
