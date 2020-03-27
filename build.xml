@@ -15,13 +15,17 @@
 	<property name="mdpc.dist" value="squeeze"/>
 	<!-- properties only needed for repository creation -->
 	<property name="mdpc.version" value="6.0.6"/>
-	<property name="mdpc.script.dir" value="/data/main/mdvl/scripts"/>
-	<property name="mdpc.pubkey"
-				value="${mdpc.script.dir}/res/gpgkey_exa.dat"/>
+	<!--
+		example
+		<property name="mdpc.pubkey"
+			value="/data/main/mdvl/scripts/res/gpgkey_exa.dat"/>
+		by default, copy from sample data
+	-->
+	<property name="mdpc.pubkey" value="/home/masysmaci/.gnupg/pubkey"/>
 	<property name="mdpc.architectures" value="i386 amd64 armhf"/>
 
 	<target name="repository_check">
-		<available file="${mdpc.repo}" type="dir"
+		<available file="${mdpc.repo}/conf" type="dir"
 						property="repository.present"/>
 	</target>
 	<target name="repository_present" depends="repository_check"
@@ -90,8 +94,9 @@ Description: Contains all MDVL-specific packages including configuration files.
 		<property name="mdpc.internal.archflag"
 					value="-A ${mdpc.internal.pkgarch}"
 					unless:set="mdpc.internal.isall"/>
-		<exec executable="reprepro" failonerror="true"
-				outputproperty="mdpc.internal.repreprolines">
+		<exec executable="reprepro" failonerror="true">
+			<redirector outputproperty="mdpc.internal.repreprolines"
+							alwayslog="true"/>
 			<arg line="${mdpc.internal.archflag}"/>
 			<arg value="-b"/>
 			<arg value="${mdpc.repo}"/>
