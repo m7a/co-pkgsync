@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="sync_new_packages" xmlns:if="ant:if"
 						xmlns:unless="ant:unless">
-	<property name="mdpc.documentation">
+	<!--
 		Repository Configuration.
 
 		To use this build.xml you need to change this to
 		suit your local system.
 
 		Additionally, the private key needs to be imported:
-		gpg --import gpgkey_private.dat
-	</property>
+		gpg -\-import gpgkey_private.dat
+	-->
 
 	<property name="mdpc.repo" value="/data/programs/repo"/>
 	<property name="mdpc.dist" value="squeeze"/>
