@@ -39,7 +39,7 @@
 Label: Ma_Sys.ma MDVL Repository
 Suite: stable
 Codename: ${mdpc.dist}
-Version: 6.0.6
+Version: ${mdpc.version}
 Architectures: ${mdpc.architectures} source
 SignWith: yes
 Components: main non-free contrib
