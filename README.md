@@ -8,7 +8,7 @@ author: ["Linux-Fan, Ma_Sys.ma (Ma_Sys.ma@web.de)"]
 keywords: ["masysmaci", "debian", "package", "reprepro", "ci", "mdpc2"]
 x-masysma-version: 1.0
 x-masysma-repository: https://www.github.com/m7a/co-pkgsync
-x-masysma-website: http://masysma.lima-city.de/32/masysmaci_pkgsync.xhtml
+x-masysma-website: http://masysma.net/32/masysmaci_pkgsync.xhtml
 x-masysma-owned: 1
 x-masysma-copyright: |
   Copyright (c) 2019, 2020 Ma_Sys.ma.

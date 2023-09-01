@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="sync_new_packages" xmlns:if="ant:if"
-						xmlns:unless="ant:unless">
+<project default="sync_all" xmlns:if="ant:if" xmlns:unless="ant:unless">
+
 	<!--
 		Repository Configuration.
 
@@ -47,10 +47,15 @@ Description: Contains all MDVL-specific packages including configuration files.
 </echo>
 	</target>
 
+	<target name="autoci" depends="sync_all"/>
+
+	<!-- TODO z not ideal that it refuses to run even interactively on non-amd64 / non-primary arches, but this might be OK for now... -->
 	<target name="sync_all">
-		<property name="masysma.ci.trigger" value="topleveladded"/>
-		<property name="masysma.ci.trigger.param" value=".deb"/>
-		<apply executable="ant" failonerror="true" verbose="true">
+		<condition property="mdpc.primary">
+			<equals arg1="${os.arch}" arg2="amd64"/>
+		</condition>
+		<apply executable="ant" failonerror="true" verbose="true"
+						if:true="${mdpc.primary}">
 			<fileset dir=".." includes="*.deb"/>
 			<srcfile prefix="-Dmdpc.internal.pkgfile="/>
 			<arg value="sync_single"/>
